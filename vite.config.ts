@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import githubContributions from "./api/github-contributions.ts";
@@ -9,7 +9,7 @@ type DevResponse = {
   json(body: unknown): void;
 };
 
-function githubApiDevPlugin() {
+function githubApiDevPlugin(env: Record<string, string>) {
   return {
     name: "github-api-dev",
     configureServer(server: { middlewares: { use: (path: string, handler: (req: any, res: any, next: () => void) => unknown) => void } }) {
@@ -29,12 +29,16 @@ function githubApiDevPlugin() {
           },
         };
 
-        await githubContributions({ method: req.method, query }, response);
+        await githubContributions({ method: req.method, query, env }, response);
       });
     },
   };
 }
 
-export default defineConfig({
-  plugins: [githubApiDevPlugin(), react(), tailwindcss()],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, ".", "");
+
+  return {
+    plugins: [githubApiDevPlugin(env), react(), tailwindcss()],
+  };
 });

@@ -1,6 +1,7 @@
 type ApiRequest = {
   method?: string;
   query?: Record<string, string | string[] | undefined>;
+  env?: Record<string, string | undefined>;
 };
 
 declare const process: { env: Record<string, string | undefined> };
@@ -52,7 +53,8 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const username = queryValue(req.query?.username) || "Ryo2702";
+  const env = req.env || process.env;
+  const username = queryValue(req.query?.username) || env.GITHUB_USERNAME || "Ryo2702";
   const from = queryValue(req.query?.from);
   const to = queryValue(req.query?.to);
 
@@ -60,9 +62,9 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     return res.status(400).json({ error: "username, from, and to are required" });
   }
 
-  const token = process.env.GITHUB_TOKEN;
+  const token = env.GITHUB_ACTIVITY || env.GITHUB_TOKEN;
   if (!token) {
-    return res.status(503).json({ error: "GITHUB_TOKEN is not configured" });
+    return res.status(503).json({ error: "GitHub activity credentials are not configured" });
   }
 
   const key = `${username}:${from}:${to}`;
