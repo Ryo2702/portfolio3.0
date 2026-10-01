@@ -61,9 +61,6 @@ export function SidebarNav({
     <aside className="desktop-sidebar" aria-label="Primary navigation">
       <div className="sidebar-brand-row">
         <a className="brand-lockup" href={`${hrefPrefix}#home`} aria-label="Go to Charles Pelayo home">
-          <span className="brand-mark" aria-hidden="true">
-            <img src="/favicons/favicon-64x64.png" alt="" />
-          </span>
           <span>
             <strong>CHARLES</strong>
             <small>PELAYO / 27</small>

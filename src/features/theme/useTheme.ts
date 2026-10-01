@@ -2,6 +2,11 @@ import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "r
 
 export type Theme = "light" | "dark";
 
+const themeColors: Record<Theme, string> = {
+  light: "#F7F6BB",
+  dark: "#114232",
+};
+
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "light";
 
@@ -24,6 +29,7 @@ export function useTheme() {
 
   useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColors[theme]);
     try {
       window.localStorage.setItem("portfolio-theme", theme);
     } catch {

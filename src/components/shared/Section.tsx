@@ -6,6 +6,7 @@ export function Section({
   eyebrow,
   title,
   intro,
+  aside,
   children,
   className = "",
   animate = true,
@@ -14,6 +15,7 @@ export function Section({
   eyebrow: string;
   title: string;
   intro?: string;
+  aside?: ReactNode;
   children: ReactNode;
   className?: string;
   animate?: boolean;
@@ -31,12 +33,13 @@ export function Section({
       transition={animate ? { duration: reducedMotion ? 0 : 0.32, ease: "easeOut" } : undefined}
       onViewportEnter={() => setIsVisible(true)}
     >
-      <div className="section-heading">
+      <div className={`section-heading ${aside ? "section-heading-with-aside" : ""}`}>
         <div>
           <p className="eyebrow">{eyebrow}</p>
           <h2>{title}</h2>
         </div>
         {intro && <p className="section-intro">{intro}</p>}
+        {aside}
       </div>
       {children}
     </motion.section>

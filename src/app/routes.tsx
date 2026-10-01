@@ -15,5 +15,5 @@ export function resolvePage(path: string) {
     return post ? <BlogDetailPage post={post} /> : <NotFoundPage />;
   }
 
-  return <PortfolioPage />;
+  return path === "/" ? <PortfolioPage /> : <NotFoundPage />;
 }

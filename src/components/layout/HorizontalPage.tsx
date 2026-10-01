@@ -3,12 +3,17 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { sectionIds } from "../../data/navigation";
 
+const wheelIntentThreshold = 140;
+const wheelIntentResetDelay = 140;
+
 export function HorizontalPage({ children, onActiveChange }: { children: ReactNode; onActiveChange: (id: string) => void }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const activeIndexRef = useRef(0);
   const pendingWheelIndexRef = useRef<number | null>(null);
   const wheelLockRef = useRef(false);
   const wheelUnlockTimeoutRef = useRef<number | null>(null);
+  const wheelIntentRef = useRef(0);
+  const wheelIntentResetTimeoutRef = useRef<number | null>(null);
   const reducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -62,8 +67,13 @@ export function HorizontalPage({ children, onActiveChange }: { children: ReactNo
       frame = requestAnimationFrame(syncTrack);
     };
     const handleWheel = (event: WheelEvent) => {
-      const rawDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
-      const usesVerticalWheel = Math.abs(event.deltaY) >= Math.abs(event.deltaX) && event.deltaY !== 0;
+      if (!(event.target instanceof Node) || !track.contains(event.target)) return;
+
+      const deltaMultiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? track.clientWidth : 1;
+      const deltaY = event.deltaY * deltaMultiplier;
+      const deltaX = event.deltaX * deltaMultiplier;
+      const rawDelta = Math.abs(deltaY) >= Math.abs(deltaX) ? deltaY : deltaX;
+      const usesVerticalWheel = Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0;
       if (!rawDelta || track.scrollWidth <= track.clientWidth + 1) return;
 
       const target = event.target instanceof HTMLElement ? event.target : null;
@@ -96,7 +106,7 @@ export function HorizontalPage({ children, onActiveChange }: { children: ReactNo
 
       if (canScrollVertically) return;
       if (canScrollHorizontally && element) {
-        const horizontalDelta = usesVerticalWheel ? event.deltaY : event.deltaX;
+        const horizontalDelta = usesVerticalWheel ? deltaY : deltaX;
         const maxScroll = element.scrollWidth - element.clientWidth;
         element.scrollLeft = Math.min(maxScroll, Math.max(0, element.scrollLeft + horizontalDelta));
         event.preventDefault();
@@ -106,8 +116,17 @@ export function HorizontalPage({ children, onActiveChange }: { children: ReactNo
       event.preventDefault();
       if (wheelLockRef.current) return;
 
+      wheelIntentRef.current += rawDelta;
+      if (wheelIntentResetTimeoutRef.current !== null) window.clearTimeout(wheelIntentResetTimeoutRef.current);
+      wheelIntentResetTimeoutRef.current = window.setTimeout(() => {
+        wheelIntentRef.current = 0;
+        wheelIntentResetTimeoutRef.current = null;
+      }, wheelIntentResetDelay);
+      if (Math.abs(wheelIntentRef.current) < wheelIntentThreshold) return;
+
       const currentIndex = pendingWheelIndexRef.current ?? activeIndexRef.current;
-      const direction = rawDelta > 0 ? 1 : -1;
+      const direction = wheelIntentRef.current > 0 ? 1 : -1;
+      wheelIntentRef.current = 0;
       const nextIndex = Math.min(sectionIds.length - 1, Math.max(0, currentIndex + direction));
       if (nextIndex === currentIndex) return;
 
@@ -144,6 +163,7 @@ export function HorizontalPage({ children, onActiveChange }: { children: ReactNo
       cancelAnimationFrame(hashFrame);
       window.clearTimeout(hashTimeout);
       if (wheelUnlockTimeoutRef.current !== null) window.clearTimeout(wheelUnlockTimeoutRef.current);
+      if (wheelIntentResetTimeoutRef.current !== null) window.clearTimeout(wheelIntentResetTimeoutRef.current);
       track.removeEventListener("scroll", scheduleSync);
       document.removeEventListener("wheel", handleWheel, wheelOptions);
       window.removeEventListener("resize", scheduleSync);
