@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "r
 export type Theme = "light" | "dark";
 
 const themeColors: Record<Theme, string> = {
-  light: "#F7F6BB",
+  light: "#F4EBD8",
   dark: "#114232",
 };
 

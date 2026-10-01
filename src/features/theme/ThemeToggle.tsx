@@ -15,14 +15,16 @@ export function ThemeToggle({
 
   return (
     <button
-      className={`theme-toggle ${pressed ? "is-pressed" : ""}`}
+      className={`theme-toggle theme-toggle-${theme} ${pressed ? "is-pressed" : ""}`}
       type="button"
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
       aria-pressed={theme === "dark"}
       aria-busy={pressed}
       onClick={onToggle}
     >
-      <Icon size={16} aria-hidden="true" />
+      <span className="theme-toggle-icon" aria-hidden="true">
+        <Icon size={16} />
+      </span>
       <span className="theme-toggle-label">{theme === "dark" ? "Light mode" : "Dark mode"}</span>
     </button>
   );
