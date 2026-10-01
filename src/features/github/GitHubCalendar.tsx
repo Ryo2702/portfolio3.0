@@ -1,39 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, CircleAlert, ExternalLink, GitBranch } from "lucide-react";
-import { site } from "../data";
-import { Section } from "./Section";
-
-type ContributionDay = { date: string; contributionCount: number };
-type ContributionWeek = { contributionDays: ContributionDay[] };
-type ContributionResponse = {
-  username: string;
-  from: string;
-  to: string;
-  totalContributions: number;
-  weeks: ContributionWeek[];
-  fetchedAt: string;
-};
-
-function getCalendarRange(value: string) {
-  const now = new Date();
-  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59));
-  const start = new Date(end);
-
-  if (value === "last-year") {
-    start.setUTCFullYear(start.getUTCFullYear() - 1);
-  } else {
-    const year = Number(value);
-    start.setUTCFullYear(year, 0, 1);
-    start.setUTCHours(0, 0, 0, 0);
-    end.setUTCFullYear(year, 11, 31);
-  }
-
-  return {
-    from: start.toISOString(),
-    to: end.toISOString(),
-    label: value === "last-year" ? "Last 12 months" : value,
-  };
-}
+import { site } from "../../data/portfolio";
+import { Section } from "../../components/shared/Section";
+import { fetchContributions, getCalendarRange, type ContributionResponse } from "./githubApi";
 
 function formatDate(value: string) {
   return new Date(value.includes("T") ? value : `${value}T12:00:00`).toLocaleDateString(undefined, {
@@ -59,21 +28,9 @@ export function GitHubCalendar() {
 
   useEffect(() => {
     const controller = new AbortController();
-    const params = new URLSearchParams({
-      from: selectedRange.from,
-      to: selectedRange.to,
-    });
 
     setState({ status: "loading" });
-    fetch(`/api/github-contributions?${params.toString()}`, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("Contribution data is unavailable right now.");
-        const payload = (await response.json()) as ContributionResponse;
-        if (!Array.isArray(payload.weeks) || typeof payload.totalContributions !== "number") {
-          throw new Error("The contribution response was incomplete.");
-        }
-        return payload;
-      })
+    fetchContributions(selectedRange, controller.signal)
       .then((data) => setState({ status: "success", data }))
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") return;

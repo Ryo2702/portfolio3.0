@@ -25,8 +25,8 @@ import {
   Wrench,
   type LucideIcon,
 } from "lucide-react";
-import { toolGroups } from "../data";
-import { Section } from "./Section";
+import { toolGroups } from "../../data/portfolio";
+import { Section } from "../shared/Section";
 
 const stackGroupIcons: Record<string, LucideIcon> = {
   "Web Development": Code2,

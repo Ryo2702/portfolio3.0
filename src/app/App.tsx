@@ -1,4 +1,4 @@
-import { resolvePage } from "./pages";
+import { resolvePage } from "./routes";
 
 export default function App() {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";

@@ -1,40 +1,5 @@
-export type Project = {
-  slug: string;
-  title: string;
-  label: string;
-  status: string;
-  year: string;
-  featured: boolean;
-  summary: string;
-  problem: string;
-  contribution: string;
-  delivered: string[];
-  technologies: string[];
-  images?: string[];
-  demo?: string;
-  repository?: string;
-};
-
-export type ExperienceEntry = {
-  role: string;
-  organization: string;
-  dates: string;
-  engagement: string;
-  location?: string;
-  details: string[];
-};
-
-export type BlogPost = {
-  slug: string;
-  title: string;
-  excerpt: string;
-  topic: string;
-  date: string;
-  tags: string[];
-  seoTitle?: string;
-  metaDescription?: string;
-  sections: { heading?: string; paragraphs: string[] }[];
-};
+// Portfolio content records live here; components only consume these records.
+import type { BlogPost, ExperienceEntry, ProcessStep, Project } from "../types/portfolio";
 
 export const site = {
   name: "Charles Aeron L. Pelayo",
@@ -45,6 +10,14 @@ export const site = {
   github: "https://github.com/Ryo2702",
   githubUsername: "Ryo2702",
 };
+
+export const services = ["Web development", "WordPress", "SEO"] as const;
+
+export const processSteps: ProcessStep[] = [
+  { number: "01", title: "Understand", description: "Clarify the audience, offer, and next action." },
+  { number: "02", title: "Build", description: "Shape the content and interface into a responsive page." },
+  { number: "03", title: "Refine", description: "Test the important paths, then hand over something maintainable." },
+];
 
 export const projects: Project[] = [
   {

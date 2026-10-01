@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import { sectionIds } from "./navigation";
+import { sectionIds } from "../../data/navigation";
 
 export function HorizontalPage({ children, onActiveChange }: { children: ReactNode; onActiveChange: (id: string) => void }) {
   const trackRef = useRef<HTMLDivElement>(null);

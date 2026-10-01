@@ -1,4 +1,5 @@
 import { ArrowUpRight, Send } from "lucide-react";
+import { services } from "../../data/portfolio";
 
 function ArrowDownIcon() {
   return <ArrowUpRight size={18} aria-hidden="true" className="rotated-arrow" />;
@@ -38,9 +39,7 @@ export function Hero() {
             </a>
           </div>
           <div className="service-strip" aria-label="Core services">
-            <span>Web development</span>
-            <span>WordPress</span>
-            <span>SEO</span>
+            {services.map((service) => <span key={service}>{service}</span>)}
           </div>
         </div>
         <Portrait />

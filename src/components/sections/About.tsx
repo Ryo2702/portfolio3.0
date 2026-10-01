@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
-import { Section } from "./Section";
+import { processSteps } from "../../data/portfolio";
+import { Section } from "../shared/Section";
 
 export function AboutSection() {
   return (
@@ -22,27 +23,15 @@ export function AboutSection() {
         <div className="process-card">
           <p className="mini-label">A simple delivery path</p>
           <ol className="process-list">
-            <li>
-              <span>01</span>
-              <div>
-                <strong>Understand</strong>
-                <p>Clarify the audience, offer, and next action.</p>
-              </div>
-            </li>
-            <li>
-              <span>02</span>
-              <div>
-                <strong>Build</strong>
-                <p>Shape the content and interface into a responsive page.</p>
-              </div>
-            </li>
-            <li>
-              <span>03</span>
-              <div>
-                <strong>Refine</strong>
-                <p>Test the important paths, then hand over something maintainable.</p>
-              </div>
-            </li>
+            {processSteps.map((step) => (
+              <li key={step.number}>
+                <span>{step.number}</span>
+                <div>
+                  <strong>{step.title}</strong>
+                  <p>{step.description}</p>
+                </div>
+              </li>
+            ))}
           </ol>
         </div>
       </div>

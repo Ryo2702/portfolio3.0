@@ -1,6 +1,6 @@
 import { ArrowUp, Check, Copy, ExternalLink, MessageCircle } from "lucide-react";
 import { useState } from "react";
-import { site } from "../data";
+import { site } from "../../data/portfolio";
 
 export function Footer() {
   const [copied, setCopied] = useState(false);
